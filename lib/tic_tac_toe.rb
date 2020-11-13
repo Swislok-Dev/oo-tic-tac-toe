@@ -29,7 +29,78 @@ class TicTacToe
         input.to_i - 1
     end
 
-    def move
+    def move(index, player)
+        @board[index] = player
+    end
 
+    def position_taken?(index)
+        @board[index] != " " ? true : false
+    end
+
+    def valid_move?(index)
+        index.between?(0, 8) && !position_taken?(index)
+    end
+
+    def turn_count
+        count = 0
+        @board.each_with_index {|i, index| count += 1 if @board[index] != " " }
+        count
+    end
+
+    def current_player
+        turn_count.even? ? "X" : "O"
+    end
+
+    def turn
+        input = input_to_index(gets.chomp)
+        if valid_move?(input)
+            move(input,current_player)
+            display_board
+        else
+            turn
+        end
+    end
+
+    def won?
+        x = WIN_COMBINATIONS.find { |i| @board[i[0]] == "X" && @board[i[1]] == "X" && @board[i[2]] == "X" }
+
+        o = WIN_COMBINATIONS.find{ |j|  @board[j[0]] == "O" && @board[j[1]] == "O" && @board[j[2]] == "O" }
+        return x || o
+    end
+
+    def full?
+        if !won?
+           return false if @board.any?(" ")
+        end
+        true
+    end
+
+    def draw?
+        full? && !won?
+    end
+
+    def over?
+        draw? || full?
+    end
+
+    def winner
+        if won?
+            @board[won?[0]] == "X" ? "X" : "O"
+        else
+            nil
+        end
+    end
+
+    def play
+        turn until over?
+        if won?
+            puts "Congratulations #{winner}!"
+        else
+            puts "Cat's Game!"
+        end
+
+
+
+    end
 
 end
